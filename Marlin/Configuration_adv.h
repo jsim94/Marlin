@@ -921,7 +921,7 @@
 
 // Safety: The probe needs time to recognize the command.
 //         Minimum command delay (ms). Enable and increase if needed.
-// #define BLTOUCH_DELAY 500
+#define BLTOUCH_DELAY 300
 
 /**
  * Settings for BLTOUCH Classic 1.2, 1.3 or BLTouch Smart 1.0, 2.0, 2.2, 3.0, 3.1, and most clones:
@@ -965,7 +965,7 @@
  *
  * Set the default state here, change with 'M401 S' or UI, use M500 to save, M502 to reset.
  */
-// #define BLTOUCH_HS_MODE true
+#define BLTOUCH_HS_MODE true
 
 // Safety: Enable voltage mode settings in the LCD menu.
 // #define BLTOUCH_LCD_VOLTAGE_MENU
@@ -1040,15 +1040,15 @@
 //
 // Add the G35 command to read bed corners to help adjust screws. Requires a bed probe.
 //
-// #define ASSISTED_TRAMMING
+#define ASSISTED_TRAMMING
 #if ENABLED(ASSISTED_TRAMMING)
 
 // Define positions for probe points.
 #define TRAMMING_POINT_XY            \
   {                                  \
-    {20, 20}, {180, 20}, {180, 180}, \
+    {28, 18}, {198, 18}, {198, 186}, \
     {                                \
-      20, 180                        \
+      28, 186                        \
     }                                \
   }
 
@@ -1059,9 +1059,9 @@
 #define TRAMMING_POINT_NAME_4 "Back-Left"
 
 #define RESTORE_LEVELING_AFTER_G35 // Enable to restore leveling setup after operation
-// #define REPORT_TRAMMING_MM          // Report Z deviation (mm) for each point relative to the first
+#define REPORT_TRAMMING_MM         // Report Z deviation (mm) for each point relative to the first
 
-// #define ASSISTED_TRAMMING_WIZARD    // Add a Tramming Wizard to the LCD menu
+#define ASSISTED_TRAMMING_WIZARD // Add a Tramming Wizard to the LCD menu
 
 // #define ASSISTED_TRAMMING_WAIT_POSITION { X_CENTER, Y_CENTER, 30 } // Move the nozzle out of the way for adjustment
 
@@ -1071,7 +1071,7 @@
  *   M4: 40 = Clockwise, 41 = Counter-Clockwise
  *   M5: 50 = Clockwise, 51 = Counter-Clockwise
  */
-#define TRAMMING_SCREW_THREAD 40
+#define TRAMMING_SCREW_THREAD 30
 
 #endif
 
@@ -1414,7 +1414,7 @@
 //
 // LCD Backlight Timeout
 //
-// #define LCD_BACKLIGHT_TIMEOUT_MINS 1  // (minutes) Timeout before turning off the backlight
+#define LCD_BACKLIGHT_TIMEOUT_MINS 4 // (minutes) Timeout before turning off the backlight
 
 #if HAS_BED_PROBE && EITHER(HAS_MARLINUI_MENU, HAS_TFT_LVGL_UI)
 // #define PROBE_OFFSET_WIZARD       // Add a Probe Z Offset calibration option to the LCD menu
@@ -1424,7 +1424,7 @@
  * Use a height slightly above the estimated nozzle-to-probe Z offset.
  * For example, with an offset of -5, consider a starting height of -4.
  */
-// #define PROBE_OFFSET_WIZARD_START_Z -4.0
+#define PROBE_OFFSET_WIZARD_START_Z 0
 
 // Set a convenient position to do the calibration (probing point and nozzle/bed-distance)
 // #define PROBE_OFFSET_WIZARD_XY_POS { X_CENTER, Y_CENTER }
@@ -1468,7 +1468,7 @@
 // #define TURBO_BACK_MENU_ITEM
 
 // Insert a menu for preheating at the top level to allow for quick access
-// #define PREHEAT_SHORTCUT_MENU_ITEM
+#define PREHEAT_SHORTCUT_MENU_ITEM
 
 #endif // HAS_MARLINUI_MENU
 
@@ -1477,10 +1477,10 @@
 #define SOUND_ON_DEFAULT // Buzzer/speaker default enabled state
 
 // The timeout to return to the status screen from sub-menus
-// #define LCD_TIMEOUT_TO_STATUS 15000   // (ms)
+#define LCD_TIMEOUT_TO_STATUS 30000 // (ms)
 
 #if ENABLED(SHOW_BOOTSCREEN)
-#define BOOTSCREEN_TIMEOUT 4000 // (ms) Total Duration to display the boot screen(s)
+#define BOOTSCREEN_TIMEOUT 2000 // (ms) Total Duration to display the boot screen(s)
 #if EITHER(HAS_MARLINUI_U8GLIB, TFT_COLOR_UI)
 #define BOOT_MARLIN_LOGO_SMALL // Show a smaller Marlin logo on the Boot Screen (saving lots of flash)
 #endif
@@ -1545,7 +1545,7 @@
 #if HAS_DISPLAY && EITHER(SDSUPPORT, SET_PROGRESS_MANUALLY)
 #define SHOW_PROGRESS_PERCENT // Show print progress percentage (doesn't affect progress bar)
 #define SHOW_ELAPSED_TIME     // Display elapsed printing time (prefix 'E')
-// #define SHOW_REMAINING_TIME           // Display estimated time to completion (prefix 'R')
+#define SHOW_REMAINING_TIME   // Display estimated time to completion (prefix 'R')
 #if ENABLED(SET_INTERACTION_TIME)
 #define SHOW_INTERACTION_TIME // Display time until next user interaction ('C' = filament change)
 #endif
@@ -2141,8 +2141,8 @@
 
 #define BABYSTEP_DISPLAY_TOTAL // Display total babysteps since last G28
 
-// #define BABYSTEP_ZPROBE_OFFSET          // Combine M851 Z and Babystepping
-// #define BABYSTEP_GLOBAL_Z               // Combine M424 Z and Babystepping
+#define BABYSTEP_ZPROBE_OFFSET // Combine M851 Z and Babystepping
+// #define BABYSTEP_GLOBAL_Z      // Combine M424 Z and Babystepping
 
 #if EITHER(BABYSTEP_ZPROBE_OFFSET, BABYSTEP_GLOBAL_Z)
 #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
