@@ -20,8 +20,8 @@
  *
  */
 #pragma once
-#error "Don't build with import-2.1.x configurations!"
-#error "Use the 'bugfix...' or 'release...' configurations matching your Marlin version."
+
+#define CONFIG_EXAMPLES_DIR "Creality/Ender-3 Pro/BigTreeTech SKR Mini E3 3.0"
 
 /**
  * Configuration.h
@@ -37,7 +37,7 @@
  *
  * Advanced settings can be found in Configuration_adv.h
  */
-#define CONFIGURATION_H_VERSION 02010300
+#define CONFIGURATION_H_VERSION 02010200
 
 //===========================================================================
 //============================= Getting Started =============================
@@ -83,7 +83,7 @@
 #define SHOW_CUSTOM_BOOTSCREEN
 
 // Show the bitmap in Marlin/_Statusscreen.h on the status screen.
-// #define CUSTOM_STATUS_SCREEN_IMAGE
+#define CUSTOM_STATUS_SCREEN_IMAGE
 
 // @section machine
 
@@ -114,6 +114,7 @@
  * :[2400, 9600, 19200, 38400, 57600, 115200, 250000, 500000, 1000000]
  */
 #define BAUDRATE 115200
+
 // #define BAUD_RATE_GCODE     // Enable G-code M575 to set the baud rate
 
 /**
@@ -711,7 +712,7 @@
  */
 #if ENABLED(MPCTEMP)
 // #define MPC_EDIT_MENU     // Add MPC editing to the "Advanced Settings" menu. (~1300 bytes of flash)
-// #define MPC_AUTOTUNE_MENU // Add MPC auto-tuning to the "Advanced Settings" menu. (~350 bytes of flash)
+#define MPC_AUTOTUNE_MENU // Add MPC auto-tuning to the "Advanced Settings" menu. (~350 bytes of flash)
 
 #define MPC_MAX BANG_MAX // (0..255) Current to nozzle while MPC is active.
 #define MPC_HEATER_POWER \
@@ -927,9 +928,8 @@
 // Enable for Polargraph Kinematics
 // #define POLARGRAPH
 #if ENABLED(POLARGRAPH)
-#define POLARGRAPH_MAX_BELT_LEN 1035.0 // (mm) Belt length at full extension. Override with M665 H.
-#define DEFAULT_SEGMENTS_PER_SECOND 5  // Move segmentation based on duration
-#define PEN_UP_DOWN_MENU               // Add "Pen Up" and "Pen Down" to the MarlinUI menu
+#define POLARGRAPH_MAX_BELT_LEN 1035.0
+#define DEFAULT_SEGMENTS_PER_SECOND 5
 #endif
 
 // @section delta
@@ -965,7 +965,7 @@
 #endif
 
 // Print surface diameter/2 minus unreachable space (avoid collisions with vertical towers).
-#define PRINTABLE_RADIUS 140.0 // (mm)
+#define DELTA_PRINTABLE_RADIUS 140.0 // (mm)
 
 // Maximum reachable area
 #define DELTA_MAX_RADIUS 140.0 // (mm)
@@ -1025,7 +1025,7 @@
 #if ENABLED(MORGAN_SCARA)
 
 // #define DEBUG_SCARA_KINEMATICS
-#define FEEDRATE_SCALING // Convert XY feedrate from mm/s to degrees/s on the fly
+#define SCARA_FEEDRATE_SCALING // Convert XY feedrate from mm/s to degrees/s on the fly
 
 // Radius around the center where the arm cannot reach
 #define MIDDLE_DEAD_ZONE_R 0 // (mm)
@@ -1060,7 +1060,7 @@
 #define TPARA_OFFSET_Y 0 // (mm)
 #define TPARA_OFFSET_Z 0 // (mm)
 
-#define FEEDRATE_SCALING // Convert XY feedrate from mm/s to degrees/s on the fly
+#define SCARA_FEEDRATE_SCALING // Convert XY feedrate from mm/s to degrees/s on the fly
 
 // Radius around the center where the arm cannot reach
 #define MIDDLE_DEAD_ZONE_R 0 // (mm)
@@ -1068,59 +1068,6 @@
 // Calculated from Calibration Guide and M360 / M114. See http://reprap.harleystudio.co.za/?page_id=1073
 #define THETA_HOMING_OFFSET 0
 #define PSI_HOMING_OFFSET 0
-#endif
-
-// @section polar
-
-/**
- * POLAR Kinematics
- *  developed by Kadir ilkimen for PolarBear CNC and babyBear
- *  https://github.com/kadirilkimen/Polar-Bear-Cnc-Machine
- *  https://github.com/kadirilkimen/babyBear-3D-printer
- *
- * A polar machine can have different configurations.
- * This kinematics is only compatible with the following configuration:
- *        X : Independent linear
- *   Y or B : Polar
- *        Z : Independent linear
- *
- * For example, PolarBear has CoreXZ plus Polar Y or B.
- *
- * Motion problem for Polar axis near center / origin:
- *
- * 3D printing:
- * Movements very close to the center of the polar axis take more time than others.
- * This brief delay results in more material deposition due to the pressure in the nozzle.
- *
- * Current Kinematics and feedrate scaling deals with this by making the movement as fast
- * as possible. It works for slow movements but doesn't work well with fast ones. A more
- * complicated extrusion compensation must be implemented.
- *
- * Ideally, it should estimate that a long rotation near the center is ahead and will cause
- * unwanted deposition. Therefore it can compensate the extrusion beforehand.
- *
- * Laser cutting:
- * Same thing would be a problem for laser engraving too. As it spends time rotating at the
- * center point, more likely it will burn more material than it should. Therefore similar
- * compensation would be implemented for laser-cutting operations.
- *
- * Milling:
- * This shouldn't be a problem for cutting/milling operations.
- */
-// #define POLAR
-#if ENABLED(POLAR)
-#define DEFAULT_SEGMENTS_PER_SECOND 180 // If movement is choppy try lowering this value
-#define PRINTABLE_RADIUS 82.0f          // (mm) Maximum travel of X axis
-
-// Movements fall inside POLAR_FAST_RADIUS are assigned the highest possible feedrate
-// to compensate unwanted deposition related to the near-origin motion problem.
-#define POLAR_FAST_RADIUS 3.0f // (mm)
-
-// Radius which is unreachable by the tool.
-// Needed if the tool is not perfectly aligned to the center of the polar axis.
-#define POLAR_CENTER_OFFSET 0.0f // (mm)
-
-#define FEEDRATE_SCALING // Convert XY feedrate from mm/s to degrees/s on the fly
 #endif
 
 // @section machine
@@ -1326,16 +1273,10 @@
  *   M204 P    Acceleration
  *   M204 R    Retract Acceleration
  *   M204 T    Travel Acceleration
- *   M204 I    Angular Acceleration
- *   M204 J    Angular Travel Acceleration
  */
-#define DEFAULT_ACCELERATION 500          // X, Y, Z ... and E acceleration for printing moves
+#define DEFAULT_ACCELERATION 500         // X, Y, Z and E acceleration for printing moves
 #define DEFAULT_RETRACT_ACCELERATION 1000 // E acceleration for retracts
-#define DEFAULT_TRAVEL_ACCELERATION 1500  // X, Y, Z ... acceleration for travel (non printing) moves
-#if ENABLED(AXIS4_ROTATES)
-#define DEFAULT_ANGULAR_ACCELERATION 3000        // I, J, K acceleration for rotational-only printing moves
-#define DEFAULT_ANGULAR_TRAVEL_ACCELERATION 3000 // I, J, K acceleration for rotational-only travel (non printing) moves
-#endif
+#define DEFAULT_TRAVEL_ACCELERATION 1500  // X, Y, Z acceleration for travel (non printing) moves
 
 /**
  * Default Jerk limits (mm/s)
@@ -1613,21 +1554,21 @@
 // 2 or 3 sets of coordinates for deploying and retracting the spring loaded touch probe on G29,
 // if servo actuated touch probe is not defined. Uncomment as appropriate for your printer/probe.
 
-#define Z_PROBE_ALLEN_KEY_DEPLOY_1 \
-  {                                \
-    30.0, PRINTABLE_RADIUS, 100.0  \
+#define Z_PROBE_ALLEN_KEY_DEPLOY_1      \
+  {                                     \
+    30.0, DELTA_PRINTABLE_RADIUS, 100.0 \
   }
 #define Z_PROBE_ALLEN_KEY_DEPLOY_1_FEEDRATE XY_PROBE_FEEDRATE
 
-#define Z_PROBE_ALLEN_KEY_DEPLOY_2 \
-  {                                \
-    0.0, PRINTABLE_RADIUS, 100.0   \
+#define Z_PROBE_ALLEN_KEY_DEPLOY_2     \
+  {                                    \
+    0.0, DELTA_PRINTABLE_RADIUS, 100.0 \
   }
 #define Z_PROBE_ALLEN_KEY_DEPLOY_2_FEEDRATE (XY_PROBE_FEEDRATE) / 10
 
-#define Z_PROBE_ALLEN_KEY_DEPLOY_3      \
-  {                                     \
-    0.0, (PRINTABLE_RADIUS)*0.75, 100.0 \
+#define Z_PROBE_ALLEN_KEY_DEPLOY_3            \
+  {                                           \
+    0.0, (DELTA_PRINTABLE_RADIUS)*0.75, 100.0 \
   }
 #define Z_PROBE_ALLEN_KEY_DEPLOY_3_FEEDRATE XY_PROBE_FEEDRATE
 
@@ -1707,13 +1648,13 @@
 #define PROBING_MARGIN 10
 
 // X and Y axis travel speed (mm/min) between probes
-#define XY_PROBE_FEEDRATE (80 * 60)
+#define XY_PROBE_FEEDRATE (133 * 60)
 
 // Feedrate (mm/min) for the first approach when double-probing (MULTIPLE_PROBING == 2)
 #define Z_PROBE_FEEDRATE_FAST (15 * 60)
 
 // Feedrate (mm/min) for the "accurate" probe of each point
-#define Z_PROBE_FEEDRATE_SLOW (Z_PROBE_FEEDRATE_FAST / 5)
+#define Z_PROBE_FEEDRATE_SLOW (Z_PROBE_FEEDRATE_FAST / 3)
 
 /**
  * Probe Activation Switch
@@ -2168,7 +2109,7 @@
 #define MESH_TEST_BED_TEMP 50      // (°C) Default bed temperature for G26.
 #define G26_XY_FEEDRATE 20         // (mm/s) Feedrate for G26 XY moves.
 #define G26_XY_FEEDRATE_TRAVEL 100 // (mm/s) Feedrate for G26 XY travel moves.
-#define G26_RETRACT_MULTIPLIER 4   // G26 Q (retraction) used by default between mesh test elements.
+#define G26_RETRACT_MULTIPLIER 3.3   // G26 Q (retraction) used by default between mesh test elements.
 #endif
 
 #endif
@@ -2189,7 +2130,7 @@
 // #define EXTRAPOLATE_BEYOND_GRID
 
 //
-// Subdivision of the grid by Catmull-Rom method.
+// Experimental Subdivision of the grid by Catmull-Rom method.
 // Synthesizes intermediate points to produce a more detailed mesh.
 //
 // #define ABL_BILINEAR_SUBDIVISION
@@ -2208,7 +2149,7 @@
 
 #define MESH_EDIT_GFX_OVERLAY // Display a graphics overlay while editing the mesh
 
-#define MESH_INSET 10        // Set Mesh bounds as an inset region of the bed
+#define MESH_INSET 1        // Set Mesh bounds as an inset region of the bed
 #define GRID_MAX_POINTS_X 10 // Don't use more than 15 points per axis, implementation limited.
 #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
 
@@ -2221,37 +2162,6 @@
 //  as the Z-Height correction value.
 
 // #define UBL_MESH_WIZARD         // Run several commands in a row to get a complete mesh
-
-/**
- * Probing not allowed within the position of an obstacle.
- */
-// #define AVOID_OBSTACLES
-#if ENABLED(AVOID_OBSTACLES)
-#define CLIP_W 23 // Bed clip width, should be padded a few mm over its physical size
-#define CLIP_H 14 // Bed clip height, should be padded a few mm over its physical size
-
-// Obstacle Rectangles defined as { X1, Y1, X2, Y2 }
-#define OBSTACLE1                                                               \
-  {                                                                             \
-    (X_BED_SIZE) / 4 - (CLIP_W) / 2, 0, (X_BED_SIZE) / 4 + (CLIP_W) / 2, CLIP_H \
-  }
-#define OBSTACLE2                                                                     \
-  {                                                                                   \
-    (X_BED_SIZE) * 3 / 4 - (CLIP_W) / 2, 0, (X_BED_SIZE)*3 / 4 + (CLIP_W) / 2, CLIP_H \
-  }
-#define OBSTACLE3                                                                                         \
-  {                                                                                                       \
-    (X_BED_SIZE) / 4 - (CLIP_W) / 2, (Y_BED_SIZE) - (CLIP_H), (X_BED_SIZE) / 4 + (CLIP_W) / 2, Y_BED_SIZE \
-  }
-#define OBSTACLE4                                                                                               \
-  {                                                                                                             \
-    (X_BED_SIZE) * 3 / 4 - (CLIP_W) / 2, (Y_BED_SIZE) - (CLIP_H), (X_BED_SIZE)*3 / 4 + (CLIP_W) / 2, Y_BED_SIZE \
-  }
-
-// The probed grid must be inset for G29 J. This is okay, since it is
-// only used to compute a linear transformation for the mesh itself.
-#define G29J_MESH_TILT_MARGIN ((CLIP_H) + 1)
-#endif
 
 #elif ENABLED(MESH_BED_LEVELING)
 
@@ -2287,8 +2197,8 @@
   {                             \
     30, 30, 30, 30              \
   }                                 // (mm) Left, Front, Right, Back insets
-#define BED_TRAMMING_HEIGHT 2.25    // (mm) Z height of nozzle at leveling points
-#define BED_TRAMMING_Z_HOP 4.0      // (mm) Z height of nozzle between leveling points
+#define BED_TRAMMING_HEIGHT 2.25   // (mm) Z height of nozzle at leveling points
+#define BED_TRAMMING_Z_HOP 3.0      // (mm) Z height of nozzle between leveling points
 #define BED_TRAMMING_INCLUDE_CENTER // Move to the center after the last corner
 #define BED_TRAMMING_USE_PROBE
 #if ENABLED(BED_TRAMMING_USE_PROBE)
@@ -2515,7 +2425,7 @@
 #endif
 
 /**
- * Clean Nozzle Feature
+ * Clean Nozzle Feature -- EXPERIMENTAL
  *
  * Adds the G12 command to perform a nozzle cleaning process.
  *
@@ -2549,6 +2459,7 @@
  *       Before starting, the nozzle moves to NOZZLE_CLEAN_START_POINT.
  *
  *   Caveats: The ending Z should be the same as starting Z.
+ * Attention: EXPERIMENTAL. G-code arguments may change.
  */
 // #define NOZZLE_CLEAN_FEATURE
 
@@ -3212,16 +3123,23 @@
 
 /**
  * DGUS Touch Display with DWIN OS. (Choose one.)
+ * ORIGIN : https://www.aliexpress.com/item/32993409517.html
+ * FYSETC : https://www.aliexpress.com/item/32961471929.html
+ * MKS    : https://www.aliexpress.com/item/1005002008179262.html
+ *
+ * Flash display with DGUS Displays for Marlin:
+ *  - Format the SD card to FAT32 with an allocation size of 4kb.
+ *  - Download files as specified for your type of display.
+ *  - Plug the microSD card into the back of the display.
+ *  - Boot the display and wait for the update to complete.
  *
  * ORIGIN (Marlin DWIN_SET)
  *  - Download https://github.com/coldtobi/Marlin_DGUS_Resources
  *  - Copy the downloaded DWIN_SET folder to the SD card.
- *  - Product: https://www.aliexpress.com/item/32993409517.html
  *
  * FYSETC (Supplier default)
  *  - Download https://github.com/FYSETC/FYSTLCD-2.0
  *  - Copy the downloaded SCREEN folder to the SD card.
- *  - Product: https://www.aliexpress.com/item/32961471929.html
  *
  * HIPRECY (Supplier default)
  *  - Download https://github.com/HiPrecy/Touch-Lcd-LEO
@@ -3230,36 +3148,19 @@
  * MKS (MKS-H43) (Supplier default)
  *  - Download https://github.com/makerbase-mks/MKS-H43
  *  - Copy the downloaded DWIN_SET folder to the SD card.
- *  - Product: https://www.aliexpress.com/item/1005002008179262.html
  *
  * RELOADED (T5UID1)
  *  - Download https://github.com/Desuuuu/DGUS-reloaded/releases
  *  - Copy the downloaded DWIN_SET folder to the SD card.
- *
- * IA_CREALITY (T5UID1)
- *  - Download https://github.com/InsanityAutomation/Marlin/raw/CrealityDwin2.0_Bleeding/TM3D_Combined480272_Landscape_V7.7z
- *  - Copy the downloaded DWIN_SET folder to the SD card.
- *
- * CREALITY_TOUCH
- *  - CR-6 OEM touch screen. A DWIN display with touch.
- *
- * Flash display with DGUS Displays for Marlin:
- *  - Format the SD card to FAT32 with an allocation size of 4kb.
- *  - Download files as specified for your type of display.
- *  - Plug the microSD card into the back of the display.
- *  - Boot the display and wait for the update to complete.
  */
-// #define DGUS_LCD_UI ORIGIN
-#if DGUS_UI_IS(MKS)
+// #define DGUS_LCD_UI_ORIGIN
+// #define DGUS_LCD_UI_FYSETC
+// #define DGUS_LCD_UI_HIPRECY
+// #define DGUS_LCD_UI_MKS
+// #define DGUS_LCD_UI_RELOADED
+#if ENABLED(DGUS_LCD_UI_MKS)
 #define USE_MKS_GREEN_UI
-#elif DGUS_UI_IS(IA_CREALITY)
-// #define LCD_SCREEN_ROTATE 90 // Portrait Mode or 800x480 displays
 #endif
-
-//
-// CR-6 OEM touch screen. A DWIN display with touch.
-//
-// #define DWIN_CREALITY_TOUCHLCD
 
 //
 // Touch-screen LCD for Malyan M200/M300 printers
@@ -3286,12 +3187,6 @@
 // 320x240 Nextion 2.8" serial TFT Resistive Touch Screen NX3224T028
 //
 // #define NEXTION_TFT
-
-//
-// PanelDue touch controller by Escher3D
-// http://escher3d.com/pages/order/products/product2.php
-//
-// #define PANELDUE
 
 //
 // Third-party or vendor-customized controller interfaces.
@@ -3422,15 +3317,6 @@
 // #define TFT_LVGL_UI
 
 #if ENABLED(TFT_COLOR_UI)
-/**
- * TFT Font for Color_UI. Choose one of the following:
- *
- * NOTOSANS  - Default font with antialiasing. Supports Latin Extended and non-Latin characters.
- * UNIFONT   - Lightweight font, no antialiasing. Supports Latin Extended and non-Latin characters.
- * HELVETICA - Lightweight font, no antialiasing. Supports Basic Latin (0x0020-0x007F) and Latin-1 Supplement (0x0080-0x00FF) characters only.
- */
-#define TFT_FONT NOTOSANS
-
 // #define TFT_SHARED_SPI   // SPI is shared between TFT display and other devices. Disable async data transfer
 #endif
 
@@ -3582,9 +3468,6 @@
 // #define RGB_LED_G_PIN 43
 // #define RGB_LED_B_PIN 35
 // #define RGB_LED_W_PIN -1
-#endif
-
-#if ANY(RGB_LED, RGBW_LED, PCA9632)
 // #define RGB_STARTUP_TEST              // For PWM pins, fade between all colors
 #if ENABLED(RGB_STARTUP_TEST)
 #define RGB_STARTUP_TEST_INNER_MS 10 // (ms) Reduce or increase fading speed
